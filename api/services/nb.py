@@ -20,7 +20,12 @@ CURRENCIES = {
 }
 
 
-async def get_national_bank_currencies_list():
+async def get_national_bank_currencies_list() -> list | None:
+    """
+    Getting information about available rates in Natianal Bank of 
+    Republic Of Belarus.
+    :return:
+    """
     async with aiohttp.ClientSession() as session:
         currencies = []
         url = "https://api.nbrb.by/exrates/currencies"
@@ -35,7 +40,7 @@ async def get_national_bank_currencies_list():
     return None
 
 
-async def get_national_bank_currency(currency: str):
+async def get_national_bank_currency(currency: str) -> dict | None:
     async with aiohttp.ClientSession() as session:
         try:
             url = CURRENCIES[currency]
@@ -50,7 +55,7 @@ async def get_national_bank_currency(currency: str):
     return None
 
 
-async def get_national_bank_currency_by_date(currency_name: str, date=""):
+async def get_national_bank_currency_by_date(currency_name: str, date) -> dict | None:
     async with aiohttp.ClientSession() as session:
         url = f"https://api.nbrb.by/exrates/rates?ondate={date}&periodicity=0"
         async with session.get(url) as response:
@@ -65,7 +70,7 @@ async def get_national_bank_currency_by_date(currency_name: str, date=""):
     return None
 
 
-async def get_national_bank_currency_delta(currency_name: str):
+async def get_national_bank_currency_delta(currency_name: str) -> dict | None:
     today = date.today()
     year = today.year
     month = today.month
@@ -86,6 +91,7 @@ async def get_national_bank_currency_delta(currency_name: str):
                         if currency["Cur_Abbreviation"] == currency_name:
                             courses[f"{months_date}"] = currency["Cur_OfficialRate"]
                 else:
+                    return None
                     print(f"Ошибка запроса: {response.status}")
     build_graph_by_day(courses)
     return courses

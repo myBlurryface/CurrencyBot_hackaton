@@ -9,7 +9,7 @@ from api.apps.constants import CurrencyEnum
 BELARUSBANK_API = "https://belarusbank.by/api/kurs_cards"
 
 
-async def get_belarusbank_currency_list():
+async def get_belarusbank_currency_list() -> list | None:
     async with aiohttp.ClientSession() as session:
         currencies = set()
         url = BELARUSBANK_API
@@ -24,10 +24,11 @@ async def get_belarusbank_currency_list():
                 currencies = list(currencies)
             else:
                 print(f"Ошибка запроса: {response.status}")
+                return None
         return currencies
 
 
-async def get_belarusbank_currency(currency: str):
+async def get_belarusbank_currency(currency: str) -> None | list:
     async with aiohttp.ClientSession() as session:
         currencies = []
         url = BELARUSBANK_API
@@ -39,8 +40,8 @@ async def get_belarusbank_currency(currency: str):
                         currency_short_name = currency_name[:3]
                         if currency_short_name == currency:
                             currencies.append(currency_name)
-                print(currencies)
             else:
                 print(f"Ошибка запроса: {response.status}")
+                return None
         return currencies
     

@@ -7,7 +7,7 @@ import json
 ALPHA_URL = "https://developerhub.alfabank.by:8273/partner/1.0.1/public/rates"
 
 
-async def get_alpha_bank_currency_list():
+async def get_alpha_bank_currency_list() -> list | None:
     async with aiohttp.ClientSession() as session:
         currencies = set()
         url = ALPHA_URL
@@ -20,10 +20,11 @@ async def get_alpha_bank_currency_list():
                 print(currencies)
             else:
                 print(f"Ошибка запроса: {response.status}")
+                return None
         return currencies
     
     
-async def get_alpha_bank_currency(currency_name: str):
+async def get_alpha_bank_currency(currency_name: str) -> list | None:
     async with aiohttp.ClientSession() as session:
         currencies = list()
         url = ALPHA_URL
@@ -37,5 +38,6 @@ async def get_alpha_bank_currency(currency_name: str):
                 print(currencies)
             else:
                 print(f"Ошибка запроса: {response.status}")
+                return None
         return currencies
     

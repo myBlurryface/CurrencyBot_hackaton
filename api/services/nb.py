@@ -35,7 +35,7 @@ async def get_national_bank_currency(currency: str):
                 print(f"Ошибка запроса: {response.status}")
                 
                 
-async def get_national_bank_by_date(date):
+async def get_national_bank_currency_by_date(date):
     async with aiohttp.ClientSession() as session:
         url = "https://api.nbrb.by/exrates/rates/USD?parammode=2"
         async with session.get(url) as response:

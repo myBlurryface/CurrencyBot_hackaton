@@ -12,6 +12,7 @@ router = APIRouter(prefix="/banks", tags=["Bank"])
 
 banks_methods = {
     BankEnum.NB.value: get_national_bank_currencies_list,
+    BankEnum.ALFA.value: get_national_bank_currencies_list,
 }
 
 

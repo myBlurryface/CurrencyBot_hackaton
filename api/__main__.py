@@ -1,6 +1,7 @@
 from fastapi import FastAPI, APIRouter
 
 from api.apps.banks.endpoints import router as bank_router
+from api.apps.currencies.endpoints import router as currency_router
 
 
 API_ROOT_URL = "/api/v1"
@@ -9,6 +10,7 @@ main_router = APIRouter(prefix=API_ROOT_URL)
 
 def setup_router(app: FastAPI, main_router: APIRouter = main_router) -> None:
     main_router.include_router(bank_router)
+    main_router.include_router(currency_router)
     app.include_router(main_router)
 
 app = FastAPI(

@@ -7,6 +7,7 @@ from api.apps.constants import BankEnum, CurrencyEnum
 from api.apps.banks.schemes import BankScheme, CurrencyScheme
 from api.services.nb import get_national_bank_currencies_list
 from api.services.alfa import get_alpha_bank_currency_list
+from api.services.belarusbank import get_belarusbank_currency_list
 
 router = APIRouter(prefix="/banks", tags=["Bank"])
 
@@ -14,6 +15,7 @@ router = APIRouter(prefix="/banks", tags=["Bank"])
 banks_methods = {
     BankEnum.NB.name: get_national_bank_currencies_list,
     BankEnum.ALFA.name: get_alpha_bank_currency_list,
+    BankEnum.BElARUSBANK.name: get_belarusbank_currency_list
 }
 
 

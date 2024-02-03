@@ -26,8 +26,3 @@ async def get_belarusbank_currency_list():
             else:
                 print(f"Ошибка запроса: {response.status}")
         return currencies
-    
-    
-if __name__ == "__main__":
-    asyncio.run(get_belarusbank_currency_list())
-    

@@ -14,6 +14,7 @@ async def get_currency_keyboard(bank):
     for item in currency_list:
         curr_keyboard.add(types.InlineKeyboardButton(text=item, callback_data=item))
     return curr_keyboard
+
 async def get_actions(alfa_check):
     if alfa_check == 'Альфа Банк':
         actions_keyboard = types.InlineKeyboardMarkup(row_width=2).add(

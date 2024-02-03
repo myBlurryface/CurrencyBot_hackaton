@@ -22,12 +22,25 @@ async def get_belarusbank_currency_list():
                     if currency_short_name in currency_list:
                         currencies.add(currency_short_name)
                 currencies = list(currencies)
+            else:
+                print(f"Ошибка запроса: {response.status}")
+        return currencies
+
+
+async def get_belarusbank_currency(currency: str):
+    async with aiohttp.ClientSession() as session:
+        currencies = []
+        url = BELARUSBANK_API
+        async with session.get(url) as response:
+            if response.status == 200:
+                data = await response.json()
+                for currency_name in data[0]:
+                    if currency_name.count('_') == 1:
+                        currency_short_name = currency_name[:3]
+                        if currency_short_name == currency:
+                            currencies.append(currency_name)
                 print(currencies)
             else:
                 print(f"Ошибка запроса: {response.status}")
         return currencies
-    
-    
-if __name__ == "__main__":
-    asyncio.run(get_belarusbank_currency_list())
     

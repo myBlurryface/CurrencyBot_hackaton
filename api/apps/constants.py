@@ -7,7 +7,7 @@ class BankEnum(Enum):
     BElARUSBANK: str = "belbank"
 
 class CurrencyEnum(Enum):
-    USD: str = "usd"
-    EUR: str = "eur"
-    GBP: str = "gbp"
-    JPY: str = "jpy"
+    USD: str = "USD"
+    EUR: str = "EUR"
+    GBP: str = "GBP"
+    JPY: str = "JPY"

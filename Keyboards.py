@@ -2,15 +2,14 @@ import api_calls as APIS
 from aiogram import types
 
 async def get_bank_keyboard():
-    keyboard_start = types.InlineKeyboardMarkup(row_width=2)
-    banks_list = APIS.get_banks_list()
-    for i in range(0, banks_list-2):
-        keyboard_start.add(types.InlineKeyboardButton(text=banks_list[i], callback_data=banks_list[i+1]),
-                          types.InlineKeyboardButton(text=banks_list[i], callback_data=banks_list[i+1]))
+    keyboard_start = types.InlineKeyboardMarkup(row_width=1)
+    banks_list = await APIS.get_banks_list()
+    for item in banks_list:
+        keyboard_start.add(types.InlineKeyboardButton(text=item[0], callback_data=item[1]))
     return keyboard_start
 
 async def get_currency_keyboard():
-    currency_list = APIS.get_currency()
+    currency_list = await APIS.get_currency()
     curr_keyboard = types.InlineKeyboardMarkup(row_width=2)
     for i in range(0, len(currency_list) - 2):
         curr_keyboard.add(types.InlineKeyboardButton(text=currency_list[i], callback_data=currency_list[i+1]),

@@ -1,4 +1,4 @@
-banks = ['Национальный банк', 'Альфа Банк', 'Беларусбанк']
+banks = []
 currency = ['USD', 'EUR', 'GBP', 'JPY']
 actions = ['same_day', 'choose_date', 'statistics', 'another_bank', 'another_currency', 'back1']
 #functions_calls = {

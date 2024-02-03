@@ -6,6 +6,7 @@ import texts as T
 import Keyboards as K
 import constants as C
 import dicts as DCT
+from api_calls import banks_dict
 
 #+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+#
 bot = Bot(token=C.BOT_API_TOKEN)                                 #
@@ -32,7 +33,7 @@ async def process_callback_language(call):
     msg_id = call.message.message_id
     data = call.data
 
-    if data in DCT.banks:
+    if data in [v for k, v in banks_dict.items()]:
         users_banks[id] = data
         # Меняем банк
         if state == 'another_bank':

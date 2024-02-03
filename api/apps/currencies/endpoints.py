@@ -12,7 +12,7 @@ router = APIRouter(prefix="/rate", tags=["Rate"])
 
 
 bank_dict = {
-    BankEnum.NB: get_national_bank_currency_by_date
+    BankEnum.NB.value: get_national_bank_currency_by_date
 }
 
 @router.get(
@@ -26,14 +26,17 @@ async def currency_by_date(
     bank: BankEnum,
     date: datetime = datetime.today()
     ):
-    implement = bank_dict.get(bank)
-    result = await implement(currency_code.value.upper(), date.date())
-    return CurrencyInfoScheme(
-        bank=bank,
-        date=date.date(),
-        code=currency_code,
-        rate=result.get("Cur_OfficialRate")
-    )
+    try:
+        implement = bank_dict.get(bank.value)
+        result = await implement(currency_code.value.upper(), date.date())
+        return CurrencyInfoScheme(
+            bank=bank,
+            date=date.date(),
+            code=currency_code,
+            rate=result.get("Cur_OfficialRate")
+        )
+    except:
+        return JSONResponse(content={"Status": "Банк не предостаялет такую валюту"})
 
 @router.get(
     "/rates",

@@ -4,6 +4,7 @@ from api.apps.constants import CurrencyEnum
 from api.services.nb import get_national_bank_currency_delta
 import dicts as DCT
 
+from datetime import datetime
 
 banks_dict = {
     "Альфа Банк": "alfa",
@@ -31,6 +32,16 @@ async def get_file(cur_code, user_id):
     result = await get_national_bank_currency_delta(cur_code, user_id)
 
 
+async def get_currency_by_date(*args, **kwargs):
+    bank = kwargs.get("bank")
+    code = kwargs.get("code")
+    date = datetime.now().date()
+    async with aiohttp.ClientSession() as session:
+        async with session.get(f"http://localhost:8000/api/v1/rate?bank={bank}&code={code}&date={date}") as response:
+            result = await response.json()
+    rate = result.get("rate")
+    text = f"Банк - {bank}\nВалюта - {code}\nДата - {date}\nКурс - {rate}"
+    return result
 
 functions_calls = {
 'statistics': get_file,

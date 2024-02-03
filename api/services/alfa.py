@@ -21,3 +21,21 @@ async def get_alpha_bank_currency_list():
             else:
                 print(f"Ошибка запроса: {response.status}")
         return currencies
+    
+    
+async def get_alpha_bank_currency(currency_name: str):
+    async with aiohttp.ClientSession() as session:
+        currencies = list()
+        url = ALPHA_URL
+        async with session.get(url) as response:
+            if response.status == 200:
+                data = await response.json()
+                for currency in data['rates']:
+                    if currency["sellIso"] == currency_name and \
+                        currency["buyIso"] == "BYN":
+                            currencies.append(currency)
+                print(currencies)
+            else:
+                print(f"Ошибка запроса: {response.status}")
+        return currencies
+    

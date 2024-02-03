@@ -1,4 +1,5 @@
 from fastapi import APIRouter
+from fastapi.responses import JSONResponse
 
 from api.apps.constants import CurrencyEnum, BankEnum
 from api.apps.banks.schemes import CurrencyScheme, BankScheme
@@ -45,7 +46,7 @@ async def currency__interval(
     start: datetime,
     end: datetime
     ):
-    ...
+    return JSONResponse(content={"Status": "Not implementation"})
 
 @router.get(
     "/statistics",
@@ -58,4 +59,4 @@ async def get_stattistic(
     start: datetime,
     end: datetime,
     ):
-    ...
+    return JSONResponse(content={"Status": "Not implementation"})

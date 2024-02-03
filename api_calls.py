@@ -27,8 +27,8 @@ async def get_banks_list():
     DCT.banks = [BANK_SHOW.get(r.get("name")) for r in result]
     return DCT.banks
 
-async def get_file(cur_code):
-    result = await get_national_bank_currency_delta(cur_code)
+async def get_file(cur_code, user_id):
+    result = await get_national_bank_currency_delta(cur_code, user_id)
 
 
 

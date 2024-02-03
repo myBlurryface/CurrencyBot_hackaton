@@ -119,8 +119,8 @@ async def process_callback_language(call):
             return
         await bot.delete_message(id, msg_id)
         call_functions = functions_calls.get(data)
-        await call_functions(currency)
-        with open("nb_delta.png", "rb") as file:
+        await call_functions(currency, id)
+        with open(f"{id}_nb_delta.png", "rb") as file:
                 await bot.send_photo(id, file)
         await bot.send_message(id,f"Выбранный банк: {bank}.\nВыбранная валюта: {currency}.\nВыбери твое следующее действие. 👇",
                                            reply_markup=actions_keyboard)

@@ -33,12 +33,13 @@ async def process_callback_language(call):
     msg_id = call.message.message_id
     data = call.data
 
-    if data in [v for k, v in banks_dict.items()]:
+    if data in DCT.banks:
         users_banks[id] = data
+        curr_keyboard = await K.get_currency_keyboard(data)
         # Меняем банк
         if state == 'another_bank':
             currency = users_currency.get(id)
-            actions_keyboard = K.get_actions(data)
+            actions_keyboard = await K.get_actions(data)
             await call.message.edit_text(f"Выбранный банк: {data}.\nВыбранная валюта: {currency}.\nВыбери твое следующее действие. 👇",
                                            reply_markup=actions_keyboard)
             chat_states[id] = ''
@@ -46,13 +47,12 @@ async def process_callback_language(call):
         # Банк не выбран. После выбора банка, проверяем валюту, если валюта есть, то продолжаем транзакцию.
         if state in DCT.functions_calls:
             currency = users_currency.get(id)
-            curr_keyboard = await K.get_currency_keyboard()
             if currency == '':
                 await call.message.edit_text(f"Сначала нужно выбрать валюту!\nВыбери ее списка! 👇",
                                              reply_markup=curr_keyboard)
                 return
             else:
-                actions_keyboard = K.get_actions(data)
+                actions_keyboard = await K.get_actions(data)
                 await bot.delete_message(id,msg_id)
                 #call_functions = DCT.functions_calls.get(id)
                 #await call_functions()
@@ -63,12 +63,12 @@ async def process_callback_language(call):
                 chat_states[id] = ''
                 return
 
-        await call.message.edit_text(f"Ты выбрал {data}, теперь выбери нужную тебе валюту из списка ниже. 👇", reply_markup=K.curr_keyboard)
+        await call.message.edit_text(f"Ты выбрал {data}, теперь выбери нужную тебе валюту из списка ниже. 👇", reply_markup=curr_keyboard)
 
     if data in DCT.currency:
         bank = users_banks.get(id)
-        actions_keyboard = K.get_actions(bank)
-        curr_keyboard = await K.get_currency_keyboard()
+        actions_keyboard = await K.get_actions(bank)
+        curr_keyboard = await K.get_currency_keyboard(bank)
         if state in DCT.functions_calls:
             if bank == '':
                 await call.message.edit_text(f"Сначала нужно выбрать валюту!\nВыбери ее списка! 👇",
@@ -91,9 +91,9 @@ async def process_callback_language(call):
     if data in DCT.actions:
         bank = users_banks.get(id)
         currency = users_currency.get(id)
-        actions_keyboard = K.get_actions(bank)
+        actions_keyboard = await K.get_actions(bank)
         keyboard_start = await K.get_bank_keyboard()
-        curr_keyboard = await K.get_currency_keyboard()
+        curr_keyboard = await K.get_currency_keyboard(bank)
         if data == 'another_bank':
             chat_states[id] = 'another_bank'
             await call.message.edit_text(f"Выбранный банк: {bank}.\nНажми на кнопку, чтобы поменять. 👇",
@@ -109,10 +109,10 @@ async def process_callback_language(call):
         elif data == 'choose_date' and bank == 'Альфа Банк':
             return
         if bank == '':
-            await call.message.edit_text(f"Сначала нужно выбрать банк!\nВыбери его списка! 👇", reply_markup=K.keyboard_start)
+            await call.message.edit_text(f"Сначала нужно выбрать банк!\nВыбери его списка! 👇", reply_markup=keyboard_start)
             return
         if currency == '':
-            await call.message.edit_text(f"Сначала нужно выбрать валюту!\nВыбери ее списка! 👇", reply_markup=K.curr_keyboard)
+            await call.message.edit_text(f"Сначала нужно выбрать валюту!\nВыбери ее списка! 👇", reply_markup=curr_keyboard)
             return
 
         await bot.delete_message(id, msg_id)

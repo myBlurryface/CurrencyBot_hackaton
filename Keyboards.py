@@ -5,15 +5,14 @@ async def get_bank_keyboard():
     keyboard_start = types.InlineKeyboardMarkup(row_width=1)
     banks_list = await APIS.get_banks_list()
     for item in banks_list:
-        keyboard_start.add(types.InlineKeyboardButton(text=item[0], callback_data=item[1]))
+        keyboard_start.add(types.InlineKeyboardButton(text=item, callback_data=item))
     return keyboard_start
 
-async def get_currency_keyboard():
-    currency_list = await APIS.get_currency()
+async def get_currency_keyboard(bank):
+    currency_list = await APIS.get_currency(bank)
     curr_keyboard = types.InlineKeyboardMarkup(row_width=2)
-    for i in range(0, len(currency_list) - 2):
-        curr_keyboard.add(types.InlineKeyboardButton(text=currency_list[i], callback_data=currency_list[i+1]),
-                          types.InlineKeyboardButton(text=currency_list[i], callback_data=currency_list[i+1]))
+    for item in currency_list:
+        curr_keyboard.add(types.InlineKeyboardButton(text=item, callback_data=item))
     return curr_keyboard
 async def get_actions(alfa_check):
     if alfa_check == 'Альфа Банк':

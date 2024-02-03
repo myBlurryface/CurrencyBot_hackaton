@@ -20,7 +20,8 @@ CURRENCIES = {
 }
 
 
-async def get_national_bank_currencies_list():
+async def get_national_bank_currencies_list() -> None | list:
+    
     async with aiohttp.ClientSession() as session:
         currencies = []
         url = "https://api.nbrb.by/exrates/currencies"
@@ -35,7 +36,7 @@ async def get_national_bank_currencies_list():
     return None
 
 
-async def get_national_bank_currency(currency: str):
+async def get_national_bank_currency(currency: str) -> None | dict:
     async with aiohttp.ClientSession() as session:
         try:
             url = CURRENCIES[currency]
@@ -50,7 +51,7 @@ async def get_national_bank_currency(currency: str):
     return None
 
 
-async def get_national_bank_currency_by_date(currency_name: str, date=""):
+async def get_national_bank_currency_by_date(currency_name: str, date="") -> dict | None:
     async with aiohttp.ClientSession() as session:
         url = f"https://api.nbrb.by/exrates/rates?ondate={date}&periodicity=0"
         async with session.get(url) as response:
@@ -65,7 +66,7 @@ async def get_national_bank_currency_by_date(currency_name: str, date=""):
     return None
 
 
-async def get_national_bank_currency_delta(currency_name: str):
+async def get_national_bank_currency_delta(currency_name: str, user_id: str) -> dict | None:
     today = date.today()
     year = today.year
     month = today.month
@@ -87,16 +88,17 @@ async def get_national_bank_currency_delta(currency_name: str):
                             courses[f"{months_date}"] = currency["Cur_OfficialRate"]
                 else:
                     print(f"Ошибка запроса: {response.status}")
-    build_graph_by_day(courses)
+                    return None
+    build_graph_by_day(courses, user_id)
     return courses
 
 
-def build_graph_by_day(currency_cource: dict):
+def build_graph_by_day(currency_cource: dict, user_id: str):
     dates = list(currency_cource.keys())
     rates = list(currency_cource.values())
     
     plt.plot(dates, rates)
     plt.xlabel("Date")
     plt.ylabel("Rate")
-    plt.title("Изменение курса валюты")
-    plt.savefig("nb_delta.png")
+    plt.title("Изменение курса валюты за месяц")
+    plt.savefig(f"{user_id}_delta.png")

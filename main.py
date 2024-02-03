@@ -54,7 +54,7 @@ async def process_callback_language(call):
             else:
                 actions_keyboard = await K.get_actions(data)
                 await bot.delete_message(id,msg_id)
-                call_functions = functions_calls.get(id)
+                call_functions = functions_calls.get(state)
                 await call_functions(currency)
                 with open("nb_delta.png", "rb") as file:
                     await bot.send_photo(id, file)
@@ -70,6 +70,7 @@ async def process_callback_language(call):
         bank = users_banks.get(id)
         actions_keyboard = await K.get_actions(bank)
         curr_keyboard = await K.get_currency_keyboard(bank)
+        users_currency[id] = data 
         if state in functions_calls:
             if bank == '':
                 await call.message.edit_text(f"Сначала нужно выбрать валюту!\nВыбери ее списка! 👇",
@@ -93,7 +94,6 @@ async def process_callback_language(call):
     if data in DCT.actions:
         bank = users_banks.get(id)
         currency = users_currency.get(id)
-        print(currency)
         actions_keyboard = await K.get_actions(bank)
         keyboard_start = await K.get_bank_keyboard()
         curr_keyboard = await K.get_currency_keyboard(bank)
@@ -117,9 +117,8 @@ async def process_callback_language(call):
         if currency == '':
             await call.message.edit_text(f"Сначала нужно выбрать валюту!\nВыбери ее списка! 👇", reply_markup=curr_keyboard)
             return
-
         await bot.delete_message(id, msg_id)
-        call_functions = functions_calls.get(id)
+        call_functions = functions_calls.get(data)
         await call_functions(currency)
         with open("nb_delta.png", "rb") as file:
                 await bot.send_photo(id, file)

@@ -47,5 +47,4 @@ async def get_national_bank():
     
     
 if __name__ == "__main__":
-    asyncio.run(get_national_bank_currencies())
-    # asyncio.run(get_national_bank())
+    asyncio.run(get_national_bank_currencies_list())

@@ -33,15 +33,16 @@ async def get_file(cur_code, user_id):
 
 
 async def get_currency_by_date(*args, **kwargs):
-    bank = kwargs.get("bank")
+    bank_name = kwargs.get("bank")
+    bank = banks_dict.get(bank_name)
     code = kwargs.get("code")
-    date = datetime.now().date()
+    date = datetime.now()
     async with aiohttp.ClientSession() as session:
-        async with session.get(f"http://localhost:8000/api/v1/rate?bank={bank}&code={code}&date={date}") as response:
+        async with session.get(f"http://localhost:8000/api/v1/rate?bank={bank}&currency_code={code}&date={date}") as response:
             result = await response.json()
     rate = result.get("rate")
-    text = f"Банк - {bank}\nВалюта - {code}\nДата - {date}\nКурс - {rate}"
-    return result
+    text = f"Банк - {bank_name}\nВалюта - {code}\nДата - {date.date()}\nКурс - {rate}"
+    return text
 
 functions_calls = {
 'statistics': get_file,

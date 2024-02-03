@@ -60,15 +60,23 @@ async def process_callback_language(call):
                 else:
                     actions_keyboard = await K.get_actions(data)
                     await bot.delete_message(id,msg_id)
-                    call_functions = functions_calls.get(state)
-                    await call_functions(currency)
-                    with open(f"{id}_delta.png", "rb") as file:
-                        await bot.send_photo(id, file)
-                    await bot.send_message(id,
-                                        f"Выбранный банк: {data}.\nВыбранная валюта: {currency}.\nВыбери твое следующее действие. 👇",
-                                        reply_markup=actions_keyboard)
-                    chat_states[id] = ''
-                    return
+                    if state == "same_day":
+                        if data != "Нац Банк":
+                            await bot.send_message(id, text="Не можем выполнить эту операцию для этого банка")
+                            return
+                        await bot.delete_message(id,msg_id)
+                        text = await get_currency_by_date(bank=data,code=currency)
+                        await bot.send_message(id, text=text)
+                        return
+                call_functions = functions_calls.get(state)
+                await call_functions(currency)
+                with open(f"{id}_delta.png", "rb") as file:
+                    await bot.send_photo(id, file)
+                await bot.send_message(id,
+                                    f"Выбранный банк: {data}.\nВыбранная валюта: {currency}.\nВыбери твое следующее действие. 👇",
+                                    reply_markup=actions_keyboard)
+                chat_states[id] = ''
+                return
 
             await call.message.edit_text(f"Ты выбрал {data}, теперь выбери нужную тебе валюту из списка ниже. 👇", reply_markup=curr_keyboard)
 
@@ -83,7 +91,14 @@ async def process_callback_language(call):
                                                 reply_markup=curr_keyboard)
                     return
                 else:
-                    await bot.delete_message(id,msg_id)
+                    if state == "same_day":
+                        if data != "Нац Банк":
+                            await bot.send_message(id, text="Не можем выполнить эту операцию для этого банка")
+                            return
+                        await bot.delete_message(id,msg_id)
+                        text = await get_currency_by_date(bank=data,code=data)
+                        await bot.send_message(id, text=text)
+                        return
                     call_functions = functions_calls.get(state)
                     await call_functions(data)
                     with open(f"{id}_delta.png", "rb") as file:
@@ -124,6 +139,13 @@ async def process_callback_language(call):
                 await call.message.edit_text(f"Сначала нужно выбрать валюту!\nВыбери ее списка! 👇", reply_markup=curr_keyboard)
                 return
             await bot.delete_message(id, msg_id)
+            if data == "same_day":
+                if bank != "Нац Банк":
+                    await bot.send_message(id, text="Не можем выполнить эту операцию для этого банка")
+                    return
+                text = await get_currency_by_date(bank=bank,code=currency)
+                await bot.send_message(id, text=text)
+                return
             call_functions = functions_calls.get(data)
             await call_functions(currency, id)
             with open(f"{id}_delta.png", "rb") as file:
@@ -132,7 +154,8 @@ async def process_callback_language(call):
                                             reply_markup=actions_keyboard)
             chat_states[id] = ''
             return
-    except:
+    except Exception as e:
+        print(e)
         await bot.send_message(id, "Что-то полшо не так...")
 
 if __name__ == '__main__':

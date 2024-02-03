@@ -2,12 +2,20 @@ import aiohttp
 
 import asyncio
 import json
+import datetime
 
 
 USD_LINK = "https://api.nbrb.by/exrates/rates/USD?parammode=2"
 EUR_LINK = "https://api.nbrb.by/exrates/rates/EUR?parammode=2"
 GBP_LINK = "https://api.nbrb.by/exrates/rates/GBP?parammode=2"
 JPY_LINK = "https://api.nbrb.by/exrates/rates/JPY?parammode=2"
+
+CURRENCIES = {
+    "USD": USD_LINK,
+    "EUR": EUR_LINK,
+    "GBP": GBP_LINK,
+    "JPY": JPY_LINK,
+}
 
 
 async def get_national_bank_currencies_list():
@@ -19,23 +27,43 @@ async def get_national_bank_currencies_list():
                 data = await response.json()
                 for currency in data:
                     currencies.append(currency["Cur_Abbreviation"])
+                return currencies
             else:
                 print(f"Ошибка запроса: {response.status}")
-        return currencies
+    return None
 
 
 async def get_national_bank_currency(currency: str):
     async with aiohttp.ClientSession() as session:
-        url = "https://api.nbrb.by/exrates/rates/USD?parammode=2"
+        try:
+            url = CURRENCIES[currency]
+        except Exception:
+            return None
         async with session.get(url) as response:
             if response.status == 200:
                 data = await response.json()
-                print(data)
+                return data
+            else:
+                print()
+    return None
+
+
+async def get_national_bank_currency_by_date(currency_name: str, date=""):
+    async with aiohttp.ClientSession() as session:
+        url = f"https://api.nbrb.by/exrates/rates?ondate={date}&periodicity=0"
+        async with session.get(url) as response:
+            if response.status == 200:
+                data = await response.json()
+                for currency in data:
+                    if currency["Cur_Abbreviation"] == currency_name:
+                        print(currency)
+                        return currency
             else:
                 print(f"Ошибка запроса: {response.status}")
-                
-                
-async def get_national_bank_currency_by_date(date):
+    return None
+
+
+async def get_national_bank_currency_delta(currency: str):
     async with aiohttp.ClientSession() as session:
         url = "https://api.nbrb.by/exrates/rates/USD?parammode=2"
         async with session.get(url) as response:
@@ -44,4 +72,3 @@ async def get_national_bank_currency_by_date(date):
                 print(data)
             else:
                 print(f"Ошибка запроса: {response.status}")
-    
